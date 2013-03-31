@@ -1,0 +1,20 @@
+{
+  "name": "MediaBrowser",
+  "title": "Browse media files within the kitFramework",
+  "namespace": "phpManufaktur\MediaBrowser",
+  "release": "0.10",
+  "category": "PHPMANUFAKTUR",
+  "type": "application",
+  "description": [
+    "en": [
+      "short": "Browse media files",
+      "long": "Browse media files",
+      "url": "https://addons.phpmanufaktur.de/mediabrowser"
+    ],
+  ],
+  "require": [
+    "framework": [
+      "release": "0.14"
+    ],
+  ]
+}
