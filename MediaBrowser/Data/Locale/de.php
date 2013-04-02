@@ -23,8 +23,6 @@ return array(
         => 'Konnte das Verzeichnis <b>%directory%</b> nicht anlegen, Meldung: <em>%message%</em>',
     "Can't change the last modification time for the file <b>%file%</b>!"
         => 'Konnte die Zeit der letzten Änderung für die Datei <b>%file%</b> nicht setzen!',
-    'Configuration'
-        => 'Fenster einrichten',
     'Create directory'
         => 'Verzeichnis anlegen',
     'Delete'
