@@ -27,6 +27,8 @@ return array(
         => 'Verzeichnis anlegen',
     'Delete'
         => 'Löschen',
+    'No file selected!'
+        => 'Es wurde keine Datei ausgewählt!',
     'one level up'
         => 'eine Verzeichnisebene höher',
     'Submit file'

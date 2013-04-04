@@ -27,6 +27,7 @@ class Browser
     protected static $directory = null;
     protected static $file = null;
     protected static $message = '';
+    protected static $CKEditorFuncNum = null;
 
     protected static $allowedExtensions = array('gif','jpg','jpeg','png');
     protected static $icon_width = 150;
@@ -44,6 +45,7 @@ class Browser
         self::$directory_mode = (is_null($this->app['request']->get('mode'))) ? 'public' : $this->app['request']->get('mode');
         self::$directory = (is_null($this->app['request']->get('directory'))) ? self::$directory_start : $this->app['request']->get('directory');
         self::$file = $this->app['request']->get('file');
+        self::$CKEditorFuncNum = $this->app['request']->get('CKEditorFuncNum');
     }
 
     /**
@@ -140,6 +142,16 @@ class Browser
         Browser::$file = $file;
     }
 
+    public static function setCKEditorFuncNum($number)
+    {
+        Browser::$CKEditorFuncNum = $number;
+    }
+
+    public static function getCKEditorFuncNum()
+    {
+        return Browser::$CKEditorFuncNum;
+    }
+
     public static function setMessage($message)
     {
         Browser::$message .= $message;
@@ -217,7 +229,16 @@ class Browser
                     'mode' => self::getDirectoryMode(),
                     'start' => self::getDirectoryStart(),
                     'directory' => self::getDirectory(),
+                    'CKEditorFuncNum' => self::getCKEditorFuncNum(),
                 )));
+                switch (self::$usage) {
+                    case 'CKEditor':
+                        $file = FRAMEWORK_URL . substr($fileinfo->__toString(), strlen(FRAMEWORK_PATH));
+                        $select_link = "javascript:returnCKEFile('$file', '".self::$CKEditorFuncNum."');";
+                        break;
+                    default:
+                        $select_link = FRAMEWORK_URL.'/admin/mediabrowser/select/'.$params;
+                }
                 list($width, $height, $type) = getimagesize($fileinfo->__toString());
                 $images[] = array(
                     'basename' => $fileinfo->getBasename(),
@@ -234,7 +255,7 @@ class Browser
                     ),
                     'link' => array(
                         'select' => array(
-                            'url' => FRAMEWORK_URL.'/admin/mediabrowser/select/'.$params
+                            'url' => $select_link
                         ),
                         'delete' => array(
                             'url' => FRAMEWORK_URL.'/admin/mediabrowser/delete/'.$params
@@ -254,7 +275,8 @@ class Browser
                     'directory' => substr($fileinfo->__toString(), strlen(FRAMEWORK_PATH)),
                     'usage' => self::getUsage(),
                     'mode' => self::getDirectoryMode(),
-                    'start' => self::getDirectoryStart()
+                    'start' => self::getDirectoryStart(),
+                    'CKEditorFuncNum' => self::getCKEditorFuncNum(),
                 )));
 
                 $directories[] = array(
@@ -273,7 +295,8 @@ class Browser
                 'directory' => substr(substr($directory, 0, strrpos($directory, '/')), strlen(FRAMEWORK_PATH)),
                 'usage' => self::getUsage(),
                 'mode' => self::getDirectoryMode(),
-                'start' => self::getDirectoryStart()
+                'start' => self::getDirectoryStart(),
+                'CKEditorFuncNum' => self::getCKEditorFuncNum(),
             )));
             $up_link = array(
                 'basename' => '..',
@@ -294,7 +317,8 @@ class Browser
             'usage' => Browser::getUsage(),
             'start' => Browser::getDirectoryStart(),
             'mode' => Browser::getDirectoryMode(),
-            'directory' => Browser::getDirectory()
+            'directory' => Browser::getDirectory(),
+            'CKEditorFuncNum' => Browser::getCKEditorFuncNum(),
         );
 
         return $this->app['form.factory']->createBuilder('form', $data)
@@ -306,6 +330,7 @@ class Browser
         ->add('start', 'hidden')
         ->add('mode', 'hidden')
         ->add('directory', 'hidden')
+        ->add('CKEditorFuncNum', 'hidden')
         ->getForm();
     }
 
@@ -316,7 +341,8 @@ class Browser
             'usage' => Browser::getUsage(),
             'start' => Browser::getDirectoryStart(),
             'mode' => Browser::getDirectoryMode(),
-            'directory' => Browser::getDirectory()
+            'directory' => Browser::getDirectory(),
+            'CKEditorFuncNum' => Browser::getCKEditorFuncNum(),
         );
 
         return $this->app['form.factory']->createBuilder('form', $data)
@@ -328,6 +354,7 @@ class Browser
         ->add('start', 'hidden')
         ->add('mode', 'hidden')
         ->add('directory', 'hidden')
+        ->add('CKEditorFuncNum', 'hidden')
         ->getForm();
     }
 
@@ -341,10 +368,19 @@ class Browser
 
         $create_directory = $this->createDirectoryForm();
 
-        $exit_params = base64_encode(json_encode(array(
-            'usage' => self::getUsage(),
-            'redirect' => self::getRedirect()
-        )));
+        switch (self::$usage) {
+            case 'CKEditor':
+                $message = $this->app['translator']->trans('No file selected!');
+                $exit_link = "javascript:returnCKEMessage('$message', '".self::$CKEditorFuncNum."');";
+                break;
+            default:
+                $exit_params = base64_encode(json_encode(array(
+                    'usage' => self::getUsage(),
+                    'redirect' => self::getRedirect(),
+                )));
+                $exit_link = FRAMEWORK_URL.'/admin/mediabrowser/exit/'.$exit_params;
+                break;
+        }
 
         return $this->app['twig']->render($this->app['utils']->templateFile('@phpManufaktur/MediaBrowser/Template', 'browser.twig'),
             array(
@@ -358,7 +394,7 @@ class Browser
                 'action' => array(
                     'upload' => FRAMEWORK_URL.'/admin/mediabrowser/upload',
                     'directory' => FRAMEWORK_URL.'/admin/mediabrowser/directory/create',
-                    'exit' => FRAMEWORK_URL.'/admin/mediabrowser/exit/'.$exit_params
+                    'exit' => $exit_link
                 ),
             ));
     }
@@ -408,6 +444,7 @@ class Browser
         Browser::setUsage($form['usage']->getData());
         Browser::setDirectoryStart($form['start']->getData());
         Browser::setDirectoryMode($form['mode']->getData());
+        Browser::setCKEditorFuncNum($form['CKEditorFuncNum']->getData());
 
         $image = array(
             'File' => $form['media_file']->getData(),
@@ -455,6 +492,7 @@ class Browser
         Browser::setUsage($form['usage']->getData());
         Browser::setDirectoryStart($form['start']->getData());
         Browser::setDirectoryMode($form['mode']->getData());
+        Browser::setCKEditorFuncNum($form['CKEditorFuncNum']->getData());
 
         $create_directory = FRAMEWORK_PATH.$this->getDirectory().$this->app['utils']->sanitizePath($form['create_directory']->getData());
 

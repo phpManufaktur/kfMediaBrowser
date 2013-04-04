@@ -15,30 +15,6 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 // scan the /Locale directory and add all available languages
 addLanguageFiles(MANUFAKTUR_PATH.'/MediaBrowser/Data/Locale');
-/*
-try {
-	$locale_path = MANUFAKTUR_PATH.'/MediaBrowser/Data/Locale';
-	if (false === ($lang_files = scandir($locale_path)))
-		throw new \Exception(sprintf("Can't read the /Locale directory %s!", $locale_path));
-	$ignore = array('.', '..', 'index.php');
-	foreach ($lang_files as $lang_file) {
-		if (!is_file($locale_path.'/'.$lang_file)) continue;
-		if (in_array($lang_file, $ignore)) continue;
-		$lang_name = pathinfo($locale_path.'/'.$lang_file, PATHINFO_FILENAME);
-		// get the array from the desired file
-		$lang_array = include_once $locale_path.'/'.$lang_file;
-		// add the locale resource file
-		$app['translator'] = $app->share($app->extend('translator', function ($translator, $app) use ($lang_array, $lang_name) {
-		    $translator->addResource('array', $lang_array, $lang_name);
-		    return $translator;
-		}));
-	}
-}
-catch (\Exception $e) {
-	throw new \Exception(sprintf('Error scanning the /Locale directory %s.', $locale_path));
-}
-*/
-
 
 // main dialog - expect the parameters given as Request
 $app->get('/admin/mediabrowser', function (Request $request) use ($app) {
@@ -74,6 +50,8 @@ $app->get('/admin/mediabrowser/delete/{delete}', function (Request $request, $de
         $Browser->setDirectory($params['directory']);
     if (isset($params['file']))
         $Browser->setFile($params['file']);
+    if (isset($params['CKEditorFuncNum']))
+        $Browser->setCKEditorFuncNum($params['CKEditorFuncNum']);
     return $Browser->Delete();
 });
 
@@ -90,6 +68,8 @@ $app->get('/admin/mediabrowser/directory/{change}', function (Request $request, 
         $Browser->setRedirect($params['redirect']);
     if (isset($params['directory']))
         $Browser->setDirectory($params['directory']);
+    if (isset($params['CKEditorFuncNum']))
+        $Browser->setCKEditorFuncNum($params['CKEditorFuncNum']);
     return $Browser->exec();
 });
 
@@ -118,4 +98,15 @@ $app->get('/admin/mediabrowser/exit/{mode}', function (Request $request, $mode) 
         'usage' => (isset($parameter['usage'])) ? $parameter['usage'] : 'framework',
     ));
     return $app->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+});
+
+$app->get('/admin/mediabrowser/cke', function (Request $request) use ($app) {
+    $Browser = new Browser();
+    $Browser->setDirectoryMode('public');
+    $Browser->setDirectory('/media/public');
+    $Browser->setDirectoryStart('/media/public');
+    $Browser->setRedirect('/admin/mediabrowser/cke');
+    $Browser->setUsage('CKEditor');
+    $Browser->setCKEditorFuncNum($request->get('CKEditorFuncNum'));
+    return $Browser->exec();
 });
