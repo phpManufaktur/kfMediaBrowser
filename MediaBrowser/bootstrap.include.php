@@ -14,6 +14,8 @@ use phpManufaktur\MediaBrowser\Control\Browser;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 // scan the /Locale directory and add all available languages
+addLanguageFiles(MANUFAKTUR_PATH.'/MediaBrowser/Data/Locale');
+/*
 try {
 	$locale_path = MANUFAKTUR_PATH.'/MediaBrowser/Data/Locale';
 	if (false === ($lang_files = scandir($locale_path)))
@@ -35,6 +37,8 @@ try {
 catch (\Exception $e) {
 	throw new \Exception(sprintf('Error scanning the /Locale directory %s.', $locale_path));
 }
+*/
+
 
 // main dialog - expect the parameters given as Request
 $app->get('/admin/mediabrowser', function (Request $request) use ($app) {
