@@ -1,20 +1,37 @@
 {
-  "name": "MediaBrowser",
-  "title": "Browse media files within the kitFramework",
-  "namespace": "phpManufaktur\MediaBrowser",
-  "release": "0.10",
-  "category": "PHPMANUFAKTUR",
-  "type": "application",
-  "description": [
-    "en": [
-      "short": "Browse media files",
-      "long": "Browse media files",
-      "url": "https://addons.phpmanufaktur.de/mediabrowser"
-    ],
-  ],
-  "require": [
-    "framework": [
-      "release": "0.14"
-    ],
-  ]
+  "name":"MediaBrowser",
+  "guid":"B571E768-07BA-40D6-9DF9-72EB5A4017A1",
+  "category":"extension",
+  "group":"phpManufaktur",
+  "vendor":"phpManufaktur",
+  "type":"application",
+  "path":"\/extension\/phpManufaktur\/phpManufaktur\/MediaBrowser",
+  "namespace": "phpManufaktur\\MediaBrowser",
+  "release": {
+    "number" : "0.16",
+    "date" : "2013-04-16"
+  },
+  "description": {
+    "en": {
+      "title":"MediaBrowser for the kitFramework",
+      "short": "MediaBrowser for the kitFramework",
+      "long": "MediaBrowser for the kitFramework ",
+      "url": "https:\/\/kit2.phpmanufaktur.de"
+    }
+  },
+  "require": {
+    "framework": {
+      "release": "0.17"
+    }
+  },
+  "license":"MIT License",
+  "download": {
+    "availability":"public",
+    "agreement":"free",
+    "github":{
+      "organization":"phpManufaktur",
+      "repository":"kfMediaBrowser"
+    },
+    "url":"https:\/\/github.com\/phpManufaktur\/kfMediaBrowser"
+  }
 }
