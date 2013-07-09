@@ -15,6 +15,8 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 // scan the /Locale directory and add all available languages
 $app['utils']->addLanguageFiles(MANUFAKTUR_PATH.'/MediaBrowser/Data/Locale');
+// scan the /Locale/Custom directory and add all available languages
+$app['utils']->addLanguageFiles(MANUFAKTUR_PATH.'/MediaBrowser/Data/Locale/Custom');
 
 // main dialog - expect the parameters given as Request
 $app->get('/admin/mediabrowser', function (Request $request) use ($app) {
