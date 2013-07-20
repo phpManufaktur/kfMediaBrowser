@@ -5,11 +5,11 @@
   "group":"phpManufaktur",
   "vendor":"phpManufaktur",
   "type":"application",
-  "path":"\/extension\/phpManufaktur\/phpManufaktur\/MediaBrowser",
+  "path":"\/extension\/phpmanufaktur\/phpManufaktur\/MediaBrowser",
   "namespace": "phpManufaktur\\MediaBrowser",
   "release": {
-    "number" : "0.16",
-    "date" : "2013-04-16"
+    "number" : "0.17",
+    "date" : "2013-07-20"
   },
   "description": {
     "en": {
