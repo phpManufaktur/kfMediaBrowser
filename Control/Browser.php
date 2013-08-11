@@ -172,7 +172,7 @@ class Browser
         list($width, $height, $type) = getimagesize($fileinfo->__toString());
         $media_dir = dirname(substr($fileinfo->__toString(), (self::$directory_mode == 'public') ? strlen(FRAMEWORK_MEDIA_PATH) : strlen(FRAMEWORK_MEDIA_PROTECTED_PATH)));
         // create Icon
-        $icon_path = FRAMEWORK_TEMP_PATH. '/media_browser/icon'. $media_dir;
+        $icon_path = $this->app['utils']->sanitizePath(FRAMEWORK_TEMP_PATH. '/media_browser/icon'. $media_dir);
         $icon_path = substr($icon_path, strlen($icon_path) - 1, 1) == DIRECTORY_SEPARATOR ? $icon_path : $icon_path.DIRECTORY_SEPARATOR;
 
         // create icon image
@@ -219,12 +219,13 @@ class Browser
         $iterator = new ImageExtensionFilter($sortedIterator, self::$allowedExtensions);
         foreach ($iterator as $fileinfo) {
             if ($fileinfo->isFile()) {
+                $file_path = $this->app['utils']->sanitizePath($fileinfo->__toString());
                 $iconWidth = 0;
                 $iconHeight = 0;
                 $icon_file = $this->createIcon($fileinfo, $iconWidth, $iconHeight);
                 $params = base64_encode(json_encode(array(
                     'redirect' => self::getRedirect(),
-                    'file' => substr($fileinfo->__toString(), strlen(FRAMEWORK_PATH)),
+                    'file' => substr($file_path, strlen(FRAMEWORK_PATH)),
                     'usage' => self::getUsage(),
                     'mode' => self::getDirectoryMode(),
                     'start' => self::getDirectoryStart(),
@@ -233,17 +234,17 @@ class Browser
                 )));
                 switch (self::$usage) {
                     case 'CKEditor':
-                        $file = FRAMEWORK_URL . substr($fileinfo->__toString(), strlen(FRAMEWORK_PATH));
+                        $file = FRAMEWORK_URL . substr($file_path, strlen(FRAMEWORK_PATH));
                         $select_link = "javascript:returnCKEFile('$file', '".self::$CKEditorFuncNum."');";
                         break;
                     default:
                         $select_link = FRAMEWORK_URL.'/admin/mediabrowser/select/'.$params;
                 }
-                list($width, $height, $type) = getimagesize($fileinfo->__toString());
+                list($width, $height, $type) = getimagesize($file_path);
                 $images[] = array(
                     'basename' => $fileinfo->getBasename(),
                     'modified' => $fileinfo->getMTime(),
-                    'path' => $fileinfo->__toString(),
+                    'path' => $file_path,
                     'size' => array(
                         'bytes' => $fileinfo->getSize(),
                         'string' => $this->app['utils']->bytes2string($fileinfo->getSize())
@@ -272,7 +273,7 @@ class Browser
                 if (($fileinfo->getBasename() == '.') || ($fileinfo->getBasename() == '..')) continue;
                 $params = base64_encode(json_encode(array(
                     'redirect' => self::getRedirect(),
-                    'directory' => substr($fileinfo->__toString(), strlen(FRAMEWORK_PATH)),
+                    'directory' => substr($file_path, strlen(FRAMEWORK_PATH)),
                     'usage' => self::getUsage(),
                     'mode' => self::getDirectoryMode(),
                     'start' => self::getDirectoryStart(),
