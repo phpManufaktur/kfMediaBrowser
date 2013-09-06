@@ -8,8 +8,8 @@
   "path":"\/extension\/phpmanufaktur\/phpManufaktur\/MediaBrowser",
   "namespace": "phpManufaktur\\MediaBrowser",
   "release": {
-    "number" : "0.18",
-    "date" : "2013-07-25"
+    "number" : "0.19",
+    "date" : "2013-09-06"
   },
   "description": {
     "en": {
