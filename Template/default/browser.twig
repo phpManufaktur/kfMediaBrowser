@@ -1,15 +1,15 @@
-{# 
+{#
   MediaBrowser
 
   @author Team phpManufaktur <team@phpmanufaktur.de>
   @link https://kit2.phpmanufaktur.de
-  @link https://github.com/phpManufaktur/kitFramework/wiki  
+  @link https://github.com/phpManufaktur/kitFramework/wiki
   @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
   @license MIT License (MIT) http://www.opensource.org/licenses/MIT
 #}
 {% if usage == 'framework' %}
-    {% set template_namespace = '@framework' %}
-    {% set template_file = 'body.twig' %}
+    {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+    {% set template_file = 'framework/body.twig' %}
 {% else %}
     {% set template_namespace = '@phpManufaktur/MediaBrowser/Template' %}
     {% set template_file = 'backend.body.twig' %}
@@ -31,7 +31,7 @@
         {{ '<p>This directory does not contain any media files</p>'|trans }}
       </div>
     {% endif %}
-    <div id="media_container">  
+    <div id="media_container">
       <div id="media_system">
         <div id="media_directory">
           {% for directory in directories %}
@@ -43,42 +43,42 @@
                 </a>
               </div>
               {% endif %}
-              <div class="directory_link{% if directory.basename == '..' %} directory_up{% endif %}">  
+              <div class="directory_link{% if directory.basename == '..' %} directory_up{% endif %}">
                 <a href="{{ directory.link.change }}" title="{{ directory.basename }}">{{ directory.basename }}{% if directory.basename == '..' %} <em>({{ 'one level up'|trans }})</em>{% endif %}</a>
               </div>
             </div>
           {% endfor %}
         </div>
         <div id="media_submit">
-          <div class="file_submit"> 
+          <div class="file_submit">
             <div class="link_exit">
               <a href="{{ action.exit }}" title="{{ 'Exit MediaBrowser'|trans }}">
                 <img src="{{ MANUFAKTUR_URL }}/MediaBrowser/Template/default/image/exit_16x15.png" width="16" height="15" alt="{{ 'Exit MediaBrowser'|trans }}" />
               </a>
             </div>
-            <form action="{{ action.upload }}" method="post" {{ form_enctype(upload) }}> 
+            <form action="{{ action.upload }}" method="post" {{ form_enctype(upload) }}>
               <div class="submit_container">
                 <div class="submit_item">
                   {{ form_widget(upload.media_file) }}
                 </div>
-                  {{ form_errors(upload.media_file) }}        
+                  {{ form_errors(upload.media_file) }}
                   {{ form_rest(upload) }}
                 <div class="submit_button">
-                  <input type="submit" value="{{ 'Submit file'|trans }}" />  
+                  <input type="submit" value="{{ 'Submit file'|trans }}" />
                 </div>
               </div>
             </form>
           </div>
           <div class="directory_create">
-            <form action="{{ action.directory }}" method="post"> 
+            <form action="{{ action.directory }}" method="post">
               <div class="submit_container">
                 <div class="submit_directory">
                   {{ form_widget(create_directory.create_directory) }}
                 </div>
-                  {{ form_errors(create_directory.create_directory) }}        
+                  {{ form_errors(create_directory.create_directory) }}
                   {{ form_rest(create_directory) }}
                 <div class="submit_button">
-                  <input type="submit" value="{{ 'Create directory'|trans }}" />  
+                  <input type="submit" value="{{ 'Create directory'|trans }}" />
                 </div>
               </div>
             </form>
