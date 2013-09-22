@@ -56,7 +56,7 @@ class Browser
         return Browser::$usage;
     }
 
-	  /**
+      /**
      * @return the $redirect
      */
     public static function getRedirect ()
@@ -64,7 +64,7 @@ class Browser
         return Browser::$redirect;
     }
 
-	  /**
+      /**
      * @return the $directory_start
      */
     public static function getDirectoryStart ()
@@ -72,7 +72,7 @@ class Browser
         return Browser::$directory_start;
     }
 
-	  /**
+      /**
      * @return the $directory_mode
      */
     public static function getDirectoryMode ()
@@ -97,7 +97,7 @@ class Browser
         return Browser::$message;
     }
 
-	  /**
+      /**
      * @param Ambigous <string, unknown> $usage
      */
     public static function setUsage ($usage=null)
@@ -105,7 +105,7 @@ class Browser
         self::$usage = is_null($usage) ? 'framework' : $usage;
     }
 
-	  /**
+      /**
      * @param field_type $redirect
      */
     public static function setRedirect ($redirect)
@@ -113,7 +113,7 @@ class Browser
         Browser::$redirect = $redirect;
     }
 
-	  /**
+      /**
      * @param string $directory_start
      */
     public static function setDirectoryStart ($directory_start=null)
@@ -121,7 +121,7 @@ class Browser
         self::$directory_start = (is_null($directory_start)) ? '/' : $directory_start;
     }
 
-	  /**
+      /**
      * @param string $directory_mode
      */
     public static function setDirectoryMode ($directory_mode=null)
@@ -167,7 +167,7 @@ class Browser
         return !empty(Browser::$message);
     }
 
-	  protected function createIcon($fileinfo, &$iconWidth, &$iconHeight)
+      protected function createIcon($fileinfo, &$iconWidth, &$iconHeight)
     {
         list($width, $height, $type) = getimagesize($fileinfo->__toString());
         $media_dir = dirname(substr($fileinfo->__toString(), (self::$directory_mode == 'public') ? strlen(FRAMEWORK_MEDIA_PATH) : strlen(FRAMEWORK_MEDIA_PROTECTED_PATH)));
@@ -383,7 +383,9 @@ class Browser
                 break;
         }
 
-        return $this->app['twig']->render($this->app['utils']->templateFile('@phpManufaktur/MediaBrowser/Template', 'browser.twig'),
+        return $this->app['twig']->render($this->app['utils']->getTemplateFile(
+            '@phpManufaktur/MediaBrowser/Template',
+            'browser.twig'),
             array(
                 'usage' => self::$usage,
                 'iframe_add_height' => 35,
