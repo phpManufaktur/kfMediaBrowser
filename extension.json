@@ -19,8 +19,8 @@
   "path":"\/extension\/phpmanufaktur\/phpManufaktur\/MediaBrowser",
   "namespace":"phpManufaktur\\MediaBrowser",
   "release":{
-    "number":"0.22",
-    "date":"2013-11-09",
+    "number":"0.23",
+    "date":"2013-12-01",
     "status":"beta"
   },
   "description": {
@@ -28,6 +28,12 @@
       "title":"MediaBrowser for the kitFramework",
       "short":"MediaBrowser for the kitFramework",
       "long":"MediaBrowser for the kitFramework ",
+      "url":"https:\/\/kit2.phpmanufaktur.de"
+    },
+    "de":{
+      "title":"Medien Browser für das kitFramework",
+      "short":"MediaBrowser for the kitFramework",
+      "long":"Der MediaBrowser verbindet den CKEditor mit den Medienverzeichnissen des CMS und des kitFramework und kann sehr einfach auch in Ihren eigenen Anwendungen sowie Erweiterungen verwendet werden.",
       "url":"https:\/\/kit2.phpmanufaktur.de"
     }
   },
