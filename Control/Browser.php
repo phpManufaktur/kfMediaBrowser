@@ -271,6 +271,7 @@ class Browser
             }
             elseif ($fileinfo->isDir()) {
                 if (($fileinfo->getBasename() == '.') || ($fileinfo->getBasename() == '..')) continue;
+                $file_path = $this->app['utils']->sanitizePath($fileinfo->__toString());
                 $params = base64_encode(json_encode(array(
                     'redirect' => self::getRedirect(),
                     'directory' => substr($file_path, strlen(FRAMEWORK_PATH)),
@@ -427,10 +428,10 @@ class Browser
         $Filesystem->remove($delete);
 
         if ($mode == 'file')
-            $message = $this->app['translator']->trans('<p>The file <b>%file%</b> was successfull deleted.</p>',
+            $message = $this->app['translator']->trans('The file %file% was successfull deleted.',
                 array('%file%' => basename($delete)));
         else
-            $message = $this->app['translator']->trans('<p>The directory <b>%directory%</b> was successfull deleted.</p>',
+            $message = $this->app['translator']->trans('The directory %directory% was successfull deleted.',
                 array('%directory%' => basename($delete)));
         $this->setMessage($message);
         return $this->exec();
@@ -474,12 +475,12 @@ class Browser
 
         if ($form->isValid()) {
             $form['media_file']->getData()->move(FRAMEWORK_PATH.$form['directory']->getData(), $form['media_file']->getData()->getClientOriginalName());
-            $this->setMessage($this->app['translator']->trans('<p>The file <b>%file%</b> was successfull uploaded.</p>',
+            $this->setMessage($this->app['translator']->trans('The file %file% was successfull uploaded.',
                 array('%file%' => $form['media_file']->getData()->getClientOriginalName())));
         }
         else {
             // Ooops, something went wrong ...
-            $this->setMessage($this->app['translator']->trans('<p>Ooops, can\'t validate the upload form, something went wrong ...</p>'));
+            $this->setMessage($this->app['translator']->trans("Ooops, can't validate the upload form, something went wrong ..."));
         }
         return $this->exec();
     }
@@ -502,7 +503,7 @@ class Browser
         $Filesystem = new Filesystem();
         $Filesystem->mkdir($create_directory);
 
-        $this->setMessage($this->app['translator']->trans('<p>The directory <b>%directory%</b> was successfull created.</p>',
+        $this->setMessage($this->app['translator']->trans('The directory %directory% was successfull created.',
             array('%directory%' => substr($create_directory, strlen(FRAMEWORK_PATH)))));
 
         return $this->exec();

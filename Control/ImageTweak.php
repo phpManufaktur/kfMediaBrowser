@@ -53,7 +53,7 @@ class ImageTweak
                 break;
             default :
                 // unsupported image type
-                throw new \Exception($this->app['translator']->trans('The file extension <b>%extension%</b> is not supported!',
+                throw new \Exception($this->app['translator']->trans('The file extension %extension% is not supported!',
                         array('%extension%' => $extension)));
         }
 
@@ -96,7 +96,7 @@ class ImageTweak
                 break;
             default:
                 // unsupported image type
-                throw new \Exception($this->app['translator']->trans('The file extension <b>%extension%</b> is not supported!',
+                throw new \Exception($this->app['translator']->trans('The file extension %extension% is not supported!',
                     array('%extension%' => $extension)));
         }
 

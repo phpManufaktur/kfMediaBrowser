@@ -28,7 +28,7 @@
     {% endif %}
     {% if images|length < 1 %}
       <div class="message">
-        {{ '<p>This directory does not contain any media files</p>'|trans }}
+        {{ 'This directory does not contain any media files.'|trans }}
       </div>
     {% endif %}
     <div id="media_container">
@@ -102,8 +102,8 @@
             <div class="link_info" style="width:{{ image.icon.width }}px;">
               <div class="link_info_size">{{ image.dimension.string }}</div>
               <div class="link_info_size">{{ image.size.string }}</div>
-              <div class="link_info_date">{{ image.modified|date("d.m.Y") }}</div>
-              <div class="link_info_date">{{ image.modified|date("H:i:s") }}</div>
+              <div class="link_info_date">{{ image.modified|date('DATE_FORMAT'|trans) }}</div>
+              <div class="link_info_date">{{ image.modified|date('TIME_FORMAT'|trans) }}</div>
               <div class="link_info_link" style="width:{{ image.icon.width }}px;">
                 <a href="{{ image.link.select.url }}" title="{{ image.basename }}">{{ image.basename }}</a>
               </div>

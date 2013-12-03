@@ -17,6 +17,7 @@ if ('á' != "\xc3\xa1") {
 return array(
     '- please select -'
         => '- bitte auswählen -',
+
     "Can't change the access rights for the file <b>%file%</b>!"
         => 'Konnte die Zugriffsrechte für die Datei <b>%file%</b> nicht ändern!',
     "Can't create the directory <b>%directory%</b>, message: <em>%message%</em>"
@@ -25,26 +26,41 @@ return array(
         => 'Konnte die Zeit der letzten Änderung für die Datei <b>%file%</b> nicht setzen!',
     'Create directory'
         => 'Verzeichnis anlegen',
+
     'Delete'
         => 'Löschen',
+    'Delete directory: %directory%'
+        => 'Verzeichnis löschen: %directory%',
+    'Delete file: %file%'
+        => 'Datei löschen: %file%',
+
+    'Exit MediaBrowser'
+        => 'MediaBrowser schließen',
+
     'No file selected!'
         => 'Es wurde keine Datei ausgewählt!',
+
     'one level up'
         => 'eine Verzeichnisebene höher',
+    "Ooops, can't validate the upload form, something went wrong ..."
+        => 'Oh, das ist etwas schiefgelaufen, kann den Upload Dialog nicht überprüfen ...',
+
     'Submit file'
         => 'Datei übermitteln',
-    '<p>The directory <b>%directory%</b> was successfull created.</p>'
-        => '<p>Das Verzeichnis <b>%directory%</b> wurde erfolgreich angelegt.</p>',
-    '<p>The directory <b>%directory%</b> was successfull deleted.</p>'
-        => '<p>Das Verzeichnis <b>%directory%</b> wurde erfolgreich gelöscht.</p>',
-    'The file extension <b>%extension%</b> is not supported!'
-        => 'Die Dateiendung <b>%extension%</b> wird nicht unterstützt!',
-    '<p>The file <b>%file%</b> was successfull deleted.</p>'
-        => '<p>Die Datei <b>%file%</b> wurde erfolgreich gelöscht.</p>',
-    '<p>The file <b>%file%</b> was successfull uploaded.</p>'
-        => '<p>Die Datei <b>%file%</b> wurde erfolgreich übermittelt.</p>',
-    '<p>This directory does not contain any media files</p>'
-        => '<p>Dieses Verzeichnis enthält keine Medien Dateien</p>',
+
+    'The directory %directory% was successfull created.'
+        => 'Das Verzeichnis %directory% wurde erfolgreich angelegt.',
+    'The directory %directory% was successfull deleted.'
+        => 'Das Verzeichnis %directory% wurde erfolgreich gelöscht.',
+    'The file extension %extension% is not supported!'
+        => 'Die Dateiendung %extension% wird nicht unterstützt!',
+    'The file %file% was successfull deleted.'
+        => 'Die Datei %file% wurde erfolgreich gelöscht.',
+    'The file %file% was successfull uploaded.'
+        => 'Die Datei %file% wurde erfolgreich übertragen.',
+    'This directory does not contain any media files.'
+        => 'Dieses Verzeichnis enthält keine Medien Dateien.',
+
     'Upload file'
         => 'Datei hochladen',
 
