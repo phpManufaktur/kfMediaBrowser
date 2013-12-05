@@ -167,10 +167,11 @@ class Browser
         return !empty(Browser::$message);
     }
 
-      protected function createIcon($fileinfo, &$iconWidth, &$iconHeight)
+    protected function createIcon($fileinfo, &$iconWidth, &$iconHeight)
     {
-        list($width, $height, $type) = getimagesize($fileinfo->__toString());
-        $media_dir = dirname(substr($fileinfo->__toString(), (self::$directory_mode == 'public') ? strlen(FRAMEWORK_MEDIA_PATH) : strlen(FRAMEWORK_MEDIA_PROTECTED_PATH)));
+        $source_path = $this->app['utils']->sanitizePath($fileinfo->__toString());
+        list($width, $height, $type) = getimagesize($source_path);
+        $media_dir = dirname(substr($source_path, (self::$directory_mode == 'public') ? strlen(FRAMEWORK_MEDIA_PATH) : strlen(FRAMEWORK_MEDIA_PROTECTED_PATH)));
         // create Icon
         $icon_path = $this->app['utils']->sanitizePath(FRAMEWORK_TEMP_PATH. '/media_browser/icon'. $media_dir);
         $icon_path = substr($icon_path, strlen($icon_path) - 1, 1) == DIRECTORY_SEPARATOR ? $icon_path : $icon_path.DIRECTORY_SEPARATOR;
@@ -189,6 +190,7 @@ class Browser
         }
         if (!file_exists($icon_path . $fileinfo->getBasename()) || ($fileinfo->getMTime() != ($mtime = filemtime($icon_path . $fileinfo->getBasename())))) {
             // create a new icon
+
             if (!file_exists($icon_path)) {
                 try {
                     mkdir($icon_path, 0755, true);
@@ -200,7 +202,16 @@ class Browser
                 }
             }
             $ImageTweak = new ImageTweak();
-            $iconPath = $ImageTweak->tweak($fileinfo->getBasename(), strtolower(substr($fileinfo->getBasename(), strrpos($fileinfo->getBasename(), '.') + 1)), $fileinfo->__toString(), $iconWidth, $iconHeight, $width, $height, $fileinfo->getMTime(), $icon_path);
+            $iconPath = $ImageTweak->tweak(
+                $fileinfo->getBasename(),
+                strtolower(substr($fileinfo->getBasename(), strrpos($fileinfo->getBasename(), '.') + 1)),
+                $source_path,
+                $iconWidth,
+                $iconHeight,
+                $width,
+                $height,
+                $fileinfo->getMTime(),
+                $icon_path);
             return substr($iconPath, strlen(FRAMEWORK_PATH));
         }
         return substr($icon_path . $fileinfo->getBasename(), strlen(FRAMEWORK_PATH));
@@ -474,7 +485,9 @@ class Browser
         }
 
         if ($form->isValid()) {
-            $form['media_file']->getData()->move(FRAMEWORK_PATH.$form['directory']->getData(), $form['media_file']->getData()->getClientOriginalName());
+            $form['media_file']->getData()->move(
+                $this->app['utils']->sanitizePath(FRAMEWORK_PATH.$form['directory']->getData()),
+                $this->app['utils']->sanitizePath($form['media_file']->getData()->getClientOriginalName()));
             $this->setMessage($this->app['translator']->trans('The file %file% was successfull uploaded.',
                 array('%file%' => $form['media_file']->getData()->getClientOriginalName())));
         }
