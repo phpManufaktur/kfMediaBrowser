@@ -45,6 +45,8 @@ return array(
     "Ooops, can't validate the upload form, something went wrong ..."
         => 'Oh, das ist etwas schiefgelaufen, kann den Upload Dialog nicht überprüfen ...',
 
+    'Select file: %file%'
+        => 'Datei auswählen: %file%',
     'Submit file'
         => 'Datei übermitteln',
 

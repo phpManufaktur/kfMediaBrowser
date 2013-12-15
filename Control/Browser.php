@@ -399,6 +399,7 @@ class Browser
             '@phpManufaktur/MediaBrowser/Template',
             'browser.twig'),
             array(
+                'actual_directory' => self::$directory,
                 'usage' => self::$usage,
                 'iframe_add_height' => 35,
                 'images' => $browse['images'],
