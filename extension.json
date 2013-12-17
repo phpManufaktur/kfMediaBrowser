@@ -19,9 +19,9 @@
   "path":"\/extension\/phpmanufaktur\/phpManufaktur\/MediaBrowser",
   "namespace":"phpManufaktur\\MediaBrowser",
   "release":{
-    "number":"0.23",
-    "date":"2013-12-01",
-    "status":"beta"
+    "number":"0.24",
+    "date":"2013-12-17",
+    "status":"stable"
   },
   "description": {
     "en":{

@@ -6,6 +6,10 @@ MIT License (MIT) - <http://www.opensource.org/licenses/MIT>
 
 kitFramework - <https://kit2.phpmanufaktur.de>
 
+**0.24** - 2013-12-17
+
+* changed the MediaBrowser to responsive design with Bootstrap 3
+
 **0.23** - 2013-12-01
 
 * changed description in `extension.json`
