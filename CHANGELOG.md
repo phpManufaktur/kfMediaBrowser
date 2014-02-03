@@ -6,6 +6,10 @@ MIT License (MIT) - <http://www.opensource.org/licenses/MIT>
 
 kitFramework - <https://kit2.phpmanufaktur.de>
 
+**0.26** - 2014-02-03
+
+* improved check for bootstrap to avoid jQuery error
+
 **0.25** - 2013-12-17
 
 * fixed the wrong file state
