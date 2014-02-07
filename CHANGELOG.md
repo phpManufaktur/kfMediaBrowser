@@ -1,10 +1,14 @@
 ## MediaBrowser
 
-(c) 2013 phpManufaktur by Ralf Hertsch
+(c) 2014 phpManufaktur by Ralf Hertsch
 
 MIT License (MIT) - <http://www.opensource.org/licenses/MIT>
 
 kitFramework - <https://kit2.phpmanufaktur.de>
+
+**0.27** - 2014-02-07
+
+* reworked the MediaBrowser, use class `Alert`, reduced the `bootstrap.include.php`
 
 **0.26** - 2014-02-03
 
