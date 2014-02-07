@@ -13,10 +13,14 @@ namespace phpManufaktur\MediaBrowser\Control;
 
 use phpManufaktur\MediaBrowser\Control\ImageExtensionFilter;
 use phpManufaktur\MediaBrowser\Control\SortedIterator;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Validator\Constraints as Assert;
+use phpManufaktur\Basic\Control\Pattern\Alert;
+use Silex\Application;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
-class Browser
+
+class Browser extends Alert
 {
     protected $app = null;
     protected static $usage = null;
@@ -26,17 +30,19 @@ class Browser
     protected static $directory_mode = null;
     protected static $directory = null;
     protected static $file = null;
-    protected static $message = '';
     protected static $CKEditorFuncNum = null;
 
     protected static $allowedExtensions = array('gif','jpg','jpeg','png');
     protected static $icon_width = 150;
 
-    public function __construct()
+    /**
+     * (non-PHPdoc)
+     * @see \phpManufaktur\Basic\Control\Pattern\Alert::initialize()
+     */
+    protected function initialize(Application $app)
     {
-        global $app;
+        parent::initialize($app);
 
-        $this->app = $app;
         $cms = $this->app['request']->get('usage');
         self::$usage = is_null($cms) ? 'framework' : $cms;
         self::$usage_param = (self::$usage != 'framework') ? '?usage='.self::$usage : '';
@@ -80,6 +86,11 @@ class Browser
         return Browser::$directory_mode;
     }
 
+    /**
+     * Get the actual directory
+     *
+     * @return Ambigous <string, string>
+     */
     public static function getDirectory()
     {
         return Browser::$directory;
@@ -92,12 +103,7 @@ class Browser
         return Browser::$file;
     }
 
-    public static function getMessage()
-    {
-        return Browser::$message;
-    }
-
-      /**
+    /**
      * @param Ambigous <string, unknown> $usage
      */
     public static function setUsage ($usage=null)
@@ -129,6 +135,11 @@ class Browser
         Browser::$directory_mode = (is_null($directory_mode)) ? 'public' : $directory_mode;
     }
 
+    /**
+     * Set the actual directory
+     *
+     * @param string $directory
+     */
     public static function setDirectory($directory=null)
     {
         Browser::$directory = (is_null($directory)) ? Browser::$directory_start : $directory;
@@ -142,31 +153,35 @@ class Browser
         Browser::$file = $file;
     }
 
+    /**
+     * Set the CK Editor function number
+     *
+     * @param integer $number
+     */
     public static function setCKEditorFuncNum($number)
     {
         Browser::$CKEditorFuncNum = $number;
     }
 
+    /**
+     * Get the CK Editor function number
+     *
+     * @return integer
+     */
     public static function getCKEditorFuncNum()
     {
         return Browser::$CKEditorFuncNum;
     }
 
-    public static function setMessage($message)
-    {
-        Browser::$message .= $message;
-    }
-
-    public static function clearMessage()
-    {
-        Browser::$message = '';
-    }
-
-    public static function isMessage()
-    {
-        return !empty(Browser::$message);
-    }
-
+    /**
+     * Create a new icon
+     *
+     * @param \Iterator $fileinfo
+     * @param integer $iconWidth
+     * @param integer $iconHeight
+     * @throws \Exception
+     * @return string
+     */
     protected function createIcon($fileinfo, &$iconWidth, &$iconHeight)
     {
         $source_path = $this->app['utils']->sanitizePath($fileinfo->__toString());
@@ -188,12 +203,11 @@ class Browser
             $iconWidth = $width;
             $iconHeight = $height;
         }
-        if (!file_exists($icon_path . $fileinfo->getBasename()) || ($fileinfo->getMTime() != ($mtime = filemtime($icon_path . $fileinfo->getBasename())))) {
+        if (!$this->app['filesystem']->exists($icon_path . $fileinfo->getBasename()) || ($fileinfo->getMTime() != ($mtime = filemtime($icon_path . $fileinfo->getBasename())))) {
             // create a new icon
-
-            if (!file_exists($icon_path)) {
+            if (!$this->app['filesystem']->exists($icon_path)) {
                 try {
-                    mkdir($icon_path, 0755, true);
+                    $this->app['filesystem']->mkdir($icon_path);
                 } catch (\ErrorException $ex) {
                     throw new \Exception($this->app['translator']->trans("Can't create the directory <b>%directory%</b>, message: <em>%message%</em>",
                         array('%directory%' => $icon_path.$fileinfo->getBasename(),
@@ -201,22 +215,27 @@ class Browser
                     )));
                 }
             }
-            $ImageTweak = new ImageTweak();
-            $iconPath = $ImageTweak->tweak(
-                $fileinfo->getBasename(),
-                strtolower(substr($fileinfo->getBasename(), strrpos($fileinfo->getBasename(), '.') + 1)),
+            $this->app['image']->resampleImage(
                 $source_path,
-                $iconWidth,
-                $iconHeight,
+                $type,
                 $width,
                 $height,
-                $fileinfo->getMTime(),
-                $icon_path);
-            return substr($iconPath, strlen(FRAMEWORK_PATH));
+                $icon_path.$fileinfo->getBasename(),
+                $iconWidth,
+                $iconHeight
+            );
+            return substr($icon_path.$fileinfo->getBasename(), strlen(FRAMEWORK_PATH));
         }
         return substr($icon_path . $fileinfo->getBasename(), strlen(FRAMEWORK_PATH));
     }
 
+    /**
+     * Browse a directory within the MediaBrowser
+     *
+     * @param string $directory
+     * @throws \Exception
+     * @return array
+     */
     protected function browseDirectory($directory)
     {
         if (is_null(self::$redirect)) {
@@ -323,6 +342,10 @@ class Browser
         return array('images' => $images, 'directories' => $directories);
     }
 
+    /**
+     * Create a form to upload media files
+     *
+     */
     protected function createUploadForm()
     {
         $data = array(
@@ -347,6 +370,10 @@ class Browser
         ->getForm();
     }
 
+    /**
+     * Create a form to create a directory
+     *
+     */
     protected function createDirectoryForm()
     {
         $data = array(
@@ -371,9 +398,13 @@ class Browser
         ->getForm();
     }
 
-    public function exec()
+    /**
+     * Show the Browser Dialog
+     *
+     * @return string MediaBrowser
+     */
+    public function showBrowser()
     {
-
         $browse = $this->browseDirectory(FRAMEWORK_PATH.self::$directory);
 
         // create the form fields for the upload
@@ -383,8 +414,8 @@ class Browser
 
         switch (self::$usage) {
             case 'CKEditor':
-                $message = $this->app['translator']->trans('No file selected!');
-                $exit_link = "javascript:returnCKEMessage('$message', '".self::$CKEditorFuncNum."');";
+                $msg = $this->app['translator']->trans('No file selected!');
+                $exit_link = "javascript:returnCKEMessage('$msg', '".self::$CKEditorFuncNum."');";
                 break;
             default:
                 $exit_params = base64_encode(json_encode(array(
@@ -404,7 +435,7 @@ class Browser
                 'iframe_add_height' => 35,
                 'images' => $browse['images'],
                 'directories' => $browse['directories'],
-                'message' => Browser::getMessage(),
+                'alert' => $this->getAlert(),
                 'upload' => $upload->createView(),
                 'create_directory' => $create_directory->createView(),
                 'action' => array(
@@ -415,55 +446,164 @@ class Browser
             ));
     }
 
-    public function delete()
+    /**
+     * General controller for the MediaBrowser
+     *
+     * @param Application $app
+     */
+    public function ControllerMediaBrowser(Application $app)
     {
-        if (!is_null(Browser::getFile())) {
-            $delete = FRAMEWORK_PATH.Browser::getFile();
+        $this->initialize($app);
+        return $this->showBrowser();
+    }
+
+    /**
+     * Initialize the MediaBrowser with a base64 encoded parameter string
+     *
+     * @param Application $app
+     * @param string $params
+     */
+    public function ControllerMediaBrowserInit(Application $app, $params)
+    {
+        $this->initialize($app);
+
+        $parameter = json_decode(base64_decode($params), true);
+        self::$usage = (isset($parameter['usage'])) ? $parameter['usage'] : 'framework';
+        self::$directory_start = (isset($parameter['start'])) ? $parameter['start'] : '/';
+        self::$redirect = (isset($parameter['redirect'])) ? $parameter['redirect'] : null;
+        self::$directory_mode = (isset($parameter['mode'])) ? $parameter['mode'] : 'public';
+        self::$directory = (isset($parameter['directory'])) ? $parameter['directory'] : null;
+
+        return $this->showBrowser();
+    }
+
+    /**
+     * Controller to delete a file or directory
+     *
+     * @param Application $app
+     * @param string $delete base64 encoded JSON Parameter string
+     * @throws \Exception
+     */
+    public function ControllerMediaBrowserDelete(Application $app, $delete)
+    {
+        $this->initialize($app);
+
+        $parameter = json_decode(base64_decode($delete), true);
+        self::$usage = (isset($parameter['usage'])) ? $parameter['usage'] : 'framework';
+        self::$directory_start = (isset($parameter['start'])) ? $parameter['start'] : '/';
+        self::$redirect = (isset($parameter['redirect'])) ? $parameter['redirect'] : null;
+        self::$directory_mode = (isset($parameter['mode'])) ? $parameter['mode'] : 'public';
+        self::$directory = (isset($parameter['directory'])) ? $parameter['directory'] : null;
+        self::$file = (isset($parameter['file'])) ? $parameter['file'] : null;
+        self::$CKEditorFuncNum = isset($parameter['CKEditorFuncNum']) ? $parameter['CKEditorFuncNum'] : null;
+
+        if (!is_null(self::$file)) {
+            $delete = FRAMEWORK_PATH.self::$file;
             $mode = 'file';
         }
-        elseif (!is_null(Browser::getDirectory())) {
-            $delete = FRAMEWORK_PATH.Browser::getDirectory();
+        elseif (!is_null(self::$directory)) {
+            $delete = FRAMEWORK_PATH.self::$directory;
             $mode = 'directory';
             // important: set the directory one level up!
-            Browser::setDirectory(substr(Browser::getDirectory(), 0, strrpos(Browser::getDirectory(), '/')));
+            self::$directory = substr(self::$directory, 0, strrpos(self::$directory, '/'));
         }
         else {
             throw new \Exception('Got no valid parameter to delete a file or directory.');
         }
 
-        $Filesystem = new Filesystem();
-
-        if (!$Filesystem->exists($delete)) {
+        if (!$this->app['filesystem']->exists($delete)) {
             throw new \Exception(sprintf('The directory or file %s does not exists!', $delete));
         }
 
-        $Filesystem->remove($delete);
+        $this->app['filesystem']->remove($delete);
 
-        if ($mode == 'file')
-            $message = $this->app['translator']->trans('The file %file% was successfull deleted.',
-                array('%file%' => basename($delete)));
-        else
-            $message = $this->app['translator']->trans('The directory %directory% was successfull deleted.',
-                array('%directory%' => basename($delete)));
-        $this->setMessage($message);
-        return $this->exec();
+        if ($mode == 'file') {
+            $this->setAlert('The file %file% was successfull deleted.',
+                array('%file%' => basename($delete), self::ALERT_TYPE_SUCCESS));
+        }
+        else {
+            $this->setAlert('The directory %directory% was successfull deleted.',
+                array('%directory%' => basename($delete), self::ALERT_TYPE_SUCCESS));
+        }
+        return $this->showBrowser();
     }
 
-    public function upload()
+    /**
+     * Controller to change the directory
+     *
+     * @param Application $app
+     * @param string $change base64 encoded JSON parameter string
+     */
+    public function ControllerMediaBrowserChangeDirectory(Application $app, $change)
     {
+        $this->initialize($app);
+
+        $parameter = json_decode(base64_decode($change), true);
+        self::$usage = (isset($parameter['usage'])) ? $parameter['usage'] : 'framework';
+        self::$directory_start = (isset($parameter['start'])) ? $parameter['start'] : '/';
+        self::$redirect = (isset($parameter['redirect'])) ? $parameter['redirect'] : null;
+        self::$directory_mode = (isset($parameter['mode'])) ? $parameter['mode'] : 'public';
+        self::$directory = (isset($parameter['directory'])) ? $parameter['directory'] : null;
+        self::$CKEditorFuncNum = isset($parameter['CKEditorFuncNum']) ? $parameter['CKEditorFuncNum'] : null;
+
+        return $this->showBrowser();
+    }
+
+    /**
+     * Controller to create the directory
+     *
+     * @param Application $app
+     * @return string
+     */
+    public function ControllerMediaBrowserCreateDirectory(Application $app)
+    {
+        $this->initialize($app);
+
+        // get the form values
+        $form = $this->createDirectoryForm();
+        $form->bind($this->app['request']);
+        $parameter = $form->getData();
+
+        self::$usage = (isset($parameter['usage'])) ? $parameter['usage'] : 'framework';
+        self::$directory_start = (isset($parameter['start'])) ? $parameter['start'] : '/';
+        self::$redirect = (isset($parameter['redirect'])) ? $parameter['redirect'] : null;
+        self::$directory_mode = (isset($parameter['mode'])) ? $parameter['mode'] : 'public';
+        self::$directory = (isset($parameter['directory'])) ? $parameter['directory'] : null;
+        self::$CKEditorFuncNum = isset($parameter['CKEditorFuncNum']) ? $parameter['CKEditorFuncNum'] : null;
+
+        $create_directory = FRAMEWORK_PATH.self::$directory.$this->app['utils']->sanitizePath($parameter['create_directory']);
+
+        $this->app['filesystem']->mkdir($create_directory);
+
+        $this->setAlert('The directory %directory% was successfull created.',
+            array('%directory%' => substr($create_directory, strlen(FRAMEWORK_PATH))), self::ALERT_TYPE_SUCCESS);
+
+        return $this->showBrowser();
+    }
+
+    /**
+     * Controller to upload a media file
+     *
+     * @param Application $app
+     */
+    public function ControllerMediaBrowserUpload(Application $app)
+    {
+        $this->initialize($app);
+
         // get the form values
         $form = $this->createUploadForm();
         $form->bind($this->app['request']);
+        $parameter = $form->getData();
 
-        Browser::setDirectory($form['directory']->getData());
-        Browser::setRedirect($form['redirect']->getData());
-        Browser::setUsage($form['usage']->getData());
-        Browser::setDirectoryStart($form['start']->getData());
-        Browser::setDirectoryMode($form['mode']->getData());
-        Browser::setCKEditorFuncNum($form['CKEditorFuncNum']->getData());
+        self::$usage = (isset($parameter['usage'])) ? $parameter['usage'] : 'framework';
+        self::$directory_start = (isset($parameter['start'])) ? $parameter['start'] : '/';
+        self::$redirect = (isset($parameter['redirect'])) ? $parameter['redirect'] : null;
+        self::$directory_mode = (isset($parameter['mode'])) ? $parameter['mode'] : 'public';
+        self::$directory = (isset($parameter['directory'])) ? $parameter['directory'] : null;
+        self::$CKEditorFuncNum = isset($parameter['CKEditorFuncNum']) ? $parameter['CKEditorFuncNum'] : null;
 
         $image = array(
-            'File' => $form['media_file']->getData(),
+            'File' => $parameter['media_file'],
         );
 
         $constraint = new Assert\Collection(array(
@@ -475,51 +615,80 @@ class Browser
 
         if (count($errors) > 0) {
             // validation failed
-            $message = '';
             foreach ($errors as $error) {
-                $message .= sprintf('<p>%s %s</p>',
-                    $error->getPropertyPath(),
-                    $error->getMessage());
+                $this->setAlert('%path% %error%', array(
+                    '%path%' => $error->getPropertyPath(),
+                    '%error%' => $error->getMessage()), self::ALERT_TYPE_WARNING);
             }
-            $this->setMessage($message);
-            return $this->exec();
+            return $this->showBrowser();
         }
 
         if ($form->isValid()) {
             $form['media_file']->getData()->move(
-                $this->app['utils']->sanitizePath(FRAMEWORK_PATH.$form['directory']->getData()),
+                $this->app['utils']->sanitizePath(FRAMEWORK_PATH.$parameter['directory']),
                 $this->app['utils']->sanitizePath($form['media_file']->getData()->getClientOriginalName()));
-            $this->setMessage($this->app['translator']->trans('The file %file% was successfull uploaded.',
-                array('%file%' => $form['media_file']->getData()->getClientOriginalName())));
+            $this->setAlert('The file %file% was successfull uploaded.',
+                array('%file%' => $form['media_file']->getData()->getClientOriginalName()), self::ALERT_TYPE_SUCCESS);
         }
         else {
             // Ooops, something went wrong ...
-            $this->setMessage($this->app['translator']->trans("Ooops, can't validate the upload form, something went wrong ..."));
+            $this->setAlert("Ooops, can't validate the upload form, something went wrong ...", array(), self::ALERT_TYPE_DANGER);
         }
-        return $this->exec();
+        return $this->ShowBrowser();
     }
 
-    public function createDirectory()
+    /**
+     * Controller to return the selected file to the calling application
+     *
+     * @param Application $app
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function ControllerMediaBrowserSelect(Application $app, $select)
     {
-        // get the form values
-        $form = $this->createDirectoryForm();
-        $form->bind($this->app['request']);
+        $this->initialize($app);
 
-        Browser::setDirectory($form['directory']->getData());
-        Browser::setRedirect($form['redirect']->getData());
-        Browser::setUsage($form['usage']->getData());
-        Browser::setDirectoryStart($form['start']->getData());
-        Browser::setDirectoryMode($form['mode']->getData());
-        Browser::setCKEditorFuncNum($form['CKEditorFuncNum']->getData());
+        $parameter = json_decode(base64_decode($select), true);
+        $subRequest = Request::create($parameter['redirect'], 'GET', array(
+            'usage' => (isset($parameter['usage'])) ? $parameter['usage'] : 'framework',
+            'file' => (isset($parameter['file'])) ? $parameter['file'] : null
+        ));
+        return $app->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+    }
 
-        $create_directory = FRAMEWORK_PATH.$this->getDirectory().$this->app['utils']->sanitizePath($form['create_directory']->getData());
+    /**
+     * Controller to exit the MediaBrowser und redirect to the calling application
+     *
+     * @param Application $app
+     * @param string $usage base64 encoded JSON parameter string
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function ControllerMediaBrowserExit(Application $app, $usage)
+    {
+        $this->initialize($app);
 
-        $Filesystem = new Filesystem();
-        $Filesystem->mkdir($create_directory);
+        $parameter = json_decode(base64_decode($usage), true);
+        $subRequest = Request::create($parameter['redirect'], 'GET', array(
+            'usage' => (isset($parameter['usage'])) ? $parameter['usage'] : 'framework',
+        ));
+        return $app->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+    }
 
-        $this->setMessage($this->app['translator']->trans('The directory %directory% was successfull created.',
-            array('%directory%' => substr($create_directory, strlen(FRAMEWORK_PATH)))));
+    /**
+     * Controller to execute the MediaBrowser from the CKEditor
+     *
+     * @param Application $app
+     */
+    public function ControllerMediaBrowserCKE(Application $app)
+    {
+        $this->initialize($app);
 
-        return $this->exec();
+        self::$usage = 'CKEditor';
+        self::$directory = '/media/public';
+        self::$directory_start = '/media/public';
+        self::$redirect = '/admin/mediabrowser/cke';
+        self::$directory_mode = 'public';
+        self::$CKEditorFuncNum = $this->app['request']->get('CKEditorFuncNum');
+
+        return $this->showBrowser();
     }
 }

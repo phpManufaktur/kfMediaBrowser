@@ -18,14 +18,14 @@
 {% block title %}{{ 'kitFramework MediaBrowser'|trans }}{% endblock %}
 {% block stylesheet %}
   {{ parent() }}
-  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/MediaBrowser/Template/default/css/browser.css" media="screen, projection" />
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/MediaBrowser/Template/default/css/browser.min.css" media="screen, projection" />
 {% endblock stylesheet %}
 
 {% block content %}
   <div class="container">
-    {% if message|length > 0 %}
-      <div class="alert alert-info">{{ message|trans }}</div>
-    {% endif %}
+    
+    {{ alert }}
+    
     <div class="row">
       <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
         {# select directory #}
