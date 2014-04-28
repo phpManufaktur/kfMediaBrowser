@@ -9,11 +9,6 @@
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
 
-// scan the /Locale directory and add all available languages
-$app['utils']->addLanguageFiles(MANUFAKTUR_PATH.'/MediaBrowser/Data/Locale');
-// scan the /Locale/Custom directory and add all available languages
-$app['utils']->addLanguageFiles(MANUFAKTUR_PATH.'/MediaBrowser/Data/Locale/Custom');
-
 // main dialog - expect the parameters given as Request
 $app->get('/admin/mediabrowser',
     'phpManufaktur\MediaBrowser\Control\Browser::ControllerMediaBrowser');
