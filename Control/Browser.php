@@ -174,6 +174,28 @@ class Browser extends Alert
     }
 
     /**
+     * Check if the User is authenticated and allowed to access the MediaBrowser
+     *
+     * @return boolean
+     */
+    protected function checkAuthentication()
+    {
+        if (!$this->app['account']->isAuthenticated()) {
+            $this->setAlert('Your are not authenticated, please login!', array(), Alert::ALERT_TYPE_WARNING);
+            return false;
+        }
+
+        if ($this->app['account']->isGranted('ROLE_MEDIABROWSER_ADMIN') ||
+            $this->app['account']->isGranted('ROLE_MEDIABROWSER_USER')) {
+            // the user is allowed to access the MediaBrowser
+            return true;
+        }
+
+        $this->setAlert('You are not allowed to access this resource!', array(), Alert::ALERT_TYPE_WARNING);
+        return false;
+    }
+
+    /**
      * Create a new icon
      *
      * @param \Iterator $fileinfo
@@ -268,7 +290,7 @@ class Browser extends Alert
                         $select_link = "javascript:returnCKEFile('$file', '".self::$CKEditorFuncNum."');";
                         break;
                     default:
-                        $select_link = FRAMEWORK_URL.'/admin/mediabrowser/select/'.$params;
+                        $select_link = FRAMEWORK_URL.'/mediabrowser/select/'.$params;
                 }
                 list($width, $height, $type) = getimagesize($file_path);
                 $images[] = array(
@@ -289,7 +311,7 @@ class Browser extends Alert
                             'url' => $select_link
                         ),
                         'delete' => array(
-                            'url' => FRAMEWORK_URL.'/admin/mediabrowser/delete/'.$params
+                            'url' => FRAMEWORK_URL.'/mediabrowser/delete/'.$params
                         )
                     ),
                     'icon' => array(
@@ -314,8 +336,8 @@ class Browser extends Alert
                 $directories[] = array(
                     'basename' => $fileinfo->getBasename(),
                     'link' => array(
-                        'change' => FRAMEWORK_URL.'/admin/mediabrowser/directory/'.$params,
-                        'delete' => FRAMEWORK_URL.'/admin/mediabrowser/delete/'.$params
+                        'change' => FRAMEWORK_URL.'/mediabrowser/directory/'.$params,
+                        'delete' => FRAMEWORK_URL.'/mediabrowser/delete/'.$params
                     )
                 );
             }
@@ -333,7 +355,7 @@ class Browser extends Alert
             $up_link = array(
                 'basename' => '..',
                 'link' => array(
-                    'change' => FRAMEWORK_URL.'/admin/mediabrowser/directory/'.$params,
+                    'change' => FRAMEWORK_URL.'/mediabrowser/directory/'.$params,
                     'delete' => null
                 )
             );
@@ -422,7 +444,7 @@ class Browser extends Alert
                     'usage' => self::getUsage(),
                     'redirect' => self::getRedirect(),
                 )));
-                $exit_link = FRAMEWORK_URL.'/admin/mediabrowser/exit/'.$exit_params;
+                $exit_link = FRAMEWORK_URL.'/mediabrowser/exit/'.$exit_params;
                 break;
         }
 
@@ -439,8 +461,8 @@ class Browser extends Alert
                 'upload' => $upload->createView(),
                 'create_directory' => $create_directory->createView(),
                 'action' => array(
-                    'upload' => FRAMEWORK_URL.'/admin/mediabrowser/upload',
-                    'directory' => FRAMEWORK_URL.'/admin/mediabrowser/directory/create',
+                    'upload' => FRAMEWORK_URL.'/mediabrowser/upload',
+                    'directory' => FRAMEWORK_URL.'/mediabrowser/directory/create',
                     'exit' => $exit_link
                 ),
             ));
@@ -454,6 +476,11 @@ class Browser extends Alert
     public function ControllerMediaBrowser(Application $app)
     {
         $this->initialize($app);
+
+        if (!$this->checkAuthentication()) {
+            return $this->promptAlert();
+        }
+
         return $this->showBrowser();
     }
 
@@ -466,6 +493,10 @@ class Browser extends Alert
     public function ControllerMediaBrowserInit(Application $app, $params)
     {
         $this->initialize($app);
+
+        if (!$this->checkAuthentication()) {
+            return $this->promptAlert();
+        }
 
         $parameter = json_decode(base64_decode($params), true);
         self::$usage = (isset($parameter['usage'])) ? $parameter['usage'] : 'framework';
@@ -487,6 +518,10 @@ class Browser extends Alert
     public function ControllerMediaBrowserDelete(Application $app, $delete)
     {
         $this->initialize($app);
+
+        if (!$this->checkAuthentication()) {
+            return $this->promptAlert();
+        }
 
         $parameter = json_decode(base64_decode($delete), true);
         self::$usage = (isset($parameter['usage'])) ? $parameter['usage'] : 'framework';
@@ -538,6 +573,10 @@ class Browser extends Alert
     {
         $this->initialize($app);
 
+        if (!$this->checkAuthentication()) {
+            return $this->promptAlert();
+        }
+
         $parameter = json_decode(base64_decode($change), true);
         self::$usage = (isset($parameter['usage'])) ? $parameter['usage'] : 'framework';
         self::$directory_start = (isset($parameter['start'])) ? $parameter['start'] : '/';
@@ -558,6 +597,10 @@ class Browser extends Alert
     public function ControllerMediaBrowserCreateDirectory(Application $app)
     {
         $this->initialize($app);
+
+        if (!$this->checkAuthentication()) {
+            return $this->promptAlert();
+        }
 
         // get the form values
         $form = $this->createDirectoryForm();
@@ -589,6 +632,10 @@ class Browser extends Alert
     public function ControllerMediaBrowserUpload(Application $app)
     {
         $this->initialize($app);
+
+        if (!$this->checkAuthentication()) {
+            return $this->promptAlert();
+        }
 
         // get the form values
         $form = $this->createUploadForm();
@@ -647,6 +694,10 @@ class Browser extends Alert
     {
         $this->initialize($app);
 
+        if (!$this->checkAuthentication()) {
+            return $this->promptAlert();
+        }
+
         $parameter = json_decode(base64_decode($select), true);
         $subRequest = Request::create($parameter['redirect'], 'GET', array(
             'usage' => (isset($parameter['usage'])) ? $parameter['usage'] : 'framework',
@@ -666,6 +717,10 @@ class Browser extends Alert
     {
         $this->initialize($app);
 
+        if (!$this->checkAuthentication()) {
+            return $this->promptAlert();
+        }
+
         $parameter = json_decode(base64_decode($usage), true);
         $subRequest = Request::create($parameter['redirect'], 'GET', array(
             'usage' => (isset($parameter['usage'])) ? $parameter['usage'] : 'framework',
@@ -682,10 +737,14 @@ class Browser extends Alert
     {
         $this->initialize($app);
 
+        if (!$this->checkAuthentication()) {
+            return $this->promptAlert();
+        }
+
         self::$usage = 'CKEditor';
         self::$directory = '/media/public';
         self::$directory_start = '/media/public';
-        self::$redirect = '/admin/mediabrowser/cke';
+        self::$redirect = '/mediabrowser/cke';
         self::$directory_mode = 'public';
         self::$CKEditorFuncNum = $this->app['request']->get('CKEditorFuncNum');
 
