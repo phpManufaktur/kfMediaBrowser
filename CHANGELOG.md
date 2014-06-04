@@ -6,6 +6,11 @@ MIT License (MIT) - <http://www.opensource.org/licenses/MIT>
 
 kitFramework - <https://kit2.phpmanufaktur.de>
 
+**0.28** - 2014-06-04
+
+* all language files are now loaded by the BASIC extension
+* changed authentication mode and user roles for access to the `/media` directory
+
 **0.27** - 2014-02-07
 
 * reworked the MediaBrowser, use class `Alert`, reduced the `bootstrap.include.php`
