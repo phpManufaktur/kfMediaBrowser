@@ -741,9 +741,10 @@ class Browser extends Alert
             return $this->promptAlert();
         }
 
+
         self::$usage = 'CKEditor';
-        self::$directory = '/media/public';
-        self::$directory_start = '/media/public';
+        self::$directory = $app['request']->query->get('directory', '/media/public');
+        self::$directory_start = $app['request']->query->get('directory_start', '/media/public');
         self::$redirect = '/mediabrowser/cke';
         self::$directory_mode = 'public';
         self::$CKEditorFuncNum = $this->app['request']->get('CKEditorFuncNum');
