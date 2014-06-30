@@ -6,6 +6,10 @@ MIT License (MIT) - <http://www.opensource.org/licenses/MIT>
 
 kitFramework - <https://kit2.phpmanufaktur.de>
 
+**0.29** - 2014-06-30
+
+* check also GET parameter for /media directories (important for setting user roles)
+
 **0.28** - 2014-06-04
 
 * all language files are now loaded by the BASIC extension
