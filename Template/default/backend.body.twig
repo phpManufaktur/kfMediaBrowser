@@ -22,8 +22,8 @@
       <link rel="shortcut icon" type="image/x-icon" href="{{ MANUFAKTUR_URL }}/Basic/Template/default/framework/image/favicon.ico" />
       {% block stylesheet %}
         {# Bootstrap #}
-        <link href="{{ LIBRARY_URL }}/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
-        <link href="{{ LIBRARY_URL }}/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
+        <link href="{{ LIBRARY_URL }}/bootstrap/latest/css/bootstrap.min.css" rel="stylesheet">
+        <link href="{{ LIBRARY_URL }}/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">
       {% endblock stylesheet %}
       {% block jquery %}
         {# 
@@ -63,7 +63,7 @@
     {% block footer %}
       {% block footer_jquery %}
         {# load needed jQuery files at the end of file to speed up loading ... #}
-        <script src="{{ LIBRARY_URL }}/jquery/jquery/1.10.2/jquery.min.js"></script>
+        <script src="{{ LIBRARY_URL }}/jquery/jquery/latest/jquery.min.js"></script>
       {% endblock footer_jquery %}  
       <script type="text/javascript">
         if (typeof 'jQuery' != 'undefined') {
