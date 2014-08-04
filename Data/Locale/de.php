@@ -27,8 +27,6 @@ return array(
     'Create directory'
         => 'Verzeichnis anlegen',
 
-    'Delete'
-        => 'Löschen',
     'Delete directory: %directory%'
         => 'Verzeichnis löschen: %directory%',
     'Delete file: %file%'
