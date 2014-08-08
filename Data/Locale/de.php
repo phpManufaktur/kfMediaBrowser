@@ -33,16 +33,22 @@ return array(
     => 'Verzeichnis',
   'Exit MediaBrowser'
     => 'MediaBrowser schließen',
+  'kitFramework MediaBrowser'
+    => 'kitFramework MediaBrowser',
   'Media file'
     => 'Mediendatei',
   'Mode'
     => 'Modus',
   'No file selected!'
     => 'Es wurde keine Datei ausgewählt!',
+  'one level up'
+    => 'eine Verzeichnisebene höher',
   'Ooops, can\'t validate the upload form, something went wrong ...'
     => 'Oh, das ist etwas schiefgelaufen, kann den Upload Dialog nicht überprüfen ...',
   'Select file: %file%'
     => 'Datei auswählen: %file%',
+  'Start'
+    => 'Start',
   'Submit file'
     => 'Datei übermitteln',
   'The directory %directory% was successfull created.'
@@ -59,9 +65,5 @@ return array(
     => 'Dieses Verzeichnis enthält keine Medien Dateien.',
   'Upload file'
     => 'Datei hochladen',
-  'kitFramework MediaBrowser'
-    => 'kitFramework MediaBrowser',
-  'one level up'
-    => 'eine Verzeichnisebene höher',
   
 );
