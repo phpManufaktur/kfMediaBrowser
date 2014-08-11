@@ -6,6 +6,10 @@ MIT License (MIT) - <http://www.opensource.org/licenses/MIT>
 
 kitFramework - <https://kit2.phpmanufaktur.de>
 
+**0.30** - 2014-08-11
+
+* improved translation handling, added support for i18nEditor
+
 **0.29** - 2014-06-30
 
 * check also GET parameter for /media directories (important for setting user roles)
