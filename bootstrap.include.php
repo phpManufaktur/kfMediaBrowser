@@ -29,7 +29,7 @@ $entry_points = $app['security.role_entry_points'];
 if (!in_array('ROLE_MEDIABROWSER_USER', $entry_points)) {
     $entry_points['ROLE_MEDIABROWSER_USER'] = array(
         array(
-            'route' => '/mediabrowser',
+            'route' => '/mediabrowser/entrypoints',
             'name' => 'MediaBrowser',
             'info' => 'Acces the public and protected Media resources',
             'icon' => array(
@@ -57,9 +57,12 @@ if (!in_array($roles, $roles_provided)) {
 }
 
 
-// main dialog - expect the parameters given as POST Request
+// main dialog - expect the parameters given as GET Request
 $app->get('/mediabrowser',
     'phpManufaktur\MediaBrowser\Control\Browser::ControllerMediaBrowser');
+// main dialog - special route for the Entry points
+$app->get('/mediabrowser/entrypoints',
+    'phpManufaktur\MediaBrowser\Control\Browser::ControllerEntryPoints');
 
 // main dialog - get all parameters as encoded string
 $app->get('/mediabrowser/init/{params}',

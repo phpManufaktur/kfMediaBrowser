@@ -52,6 +52,14 @@ class Browser extends Alert
         self::$directory = (is_null($this->app['request']->get('directory'))) ? self::$directory_start : $this->app['request']->get('directory');
         self::$file = $this->app['request']->get('file');
         self::$CKEditorFuncNum = $this->app['request']->get('CKEditorFuncNum');
+
+        // set the locale from the CMS locale
+        if (self::$usage !== 'framework') {
+            $app['translator']->setLocale($this->app['session']->get('CMS_LOCALE', 'en'));
+        }
+        else {
+            $app['translator']->setLocale($this->app['request']->get('locale', 'en'));
+        }
     }
 
     /**
@@ -482,6 +490,19 @@ class Browser extends Alert
         }
 
         return $this->showBrowser();
+    }
+
+    public function ControllerEntryPoints(Application $app)
+    {
+        $subRequest = Request::create('/mediabrowser', 'GET', array(
+            'usage' => 'framework',
+            'start' => '/',
+            'redirect' => '/',
+            'mode' => 'public',
+            'directory' => '/',
+            'locale' => $app['translator']->getLocale()
+        ));
+        return $app->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
     }
 
     /**
