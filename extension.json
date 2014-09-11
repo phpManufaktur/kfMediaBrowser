@@ -19,8 +19,8 @@
   "path":"\/extension\/phpmanufaktur\/phpManufaktur\/MediaBrowser",
   "namespace":"phpManufaktur\\MediaBrowser",
   "release":{
-    "number":"0.30",
-    "date":"2014-08-11",
+    "number":"0.31",
+    "date":"2014-09-11",
     "status":"release"
   },
   "description": {
@@ -44,7 +44,7 @@
     "extension":{
         "phpManufaktur":{
             "Basic":{
-                "release":"1.0.5"
+                "release":"1.0.10"
             }
         }
     }

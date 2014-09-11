@@ -6,6 +6,10 @@ MIT License (MIT) - <http://www.opensource.org/licenses/MIT>
 
 kitFramework - <https://kit2.phpmanufaktur.de>
 
+**0.31** - 2014-09-11
+
+* fixed a problem executing the MediaBrowser within the Admin EntryPoints
+
 **0.30** - 2014-08-11
 
 * improved translation handling, added support for i18nEditor
