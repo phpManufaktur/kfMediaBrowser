@@ -28,13 +28,13 @@
       "title":"MediaBrowser for the kitFramework",
       "short":"MediaBrowser for the kitFramework",
       "long":"MediaBrowser for the kitFramework ",
-      "url":"https:\/\/kit2.phpmanufaktur.de"
+      "url":"https:\/\/kit2.phpmanufaktur.de\/MediaBrowser"
     },
     "de":{
       "title":"Medien Browser für das kitFramework",
       "short":"MediaBrowser for the kitFramework",
       "long":"Der MediaBrowser verbindet den CKEditor mit den Medienverzeichnissen des CMS und des kitFramework und kann sehr einfach auch in Ihren eigenen Anwendungen sowie Erweiterungen verwendet werden.",
-      "url":"https:\/\/kit2.phpmanufaktur.de"
+      "url":"https:\/\/kit2.phpmanufaktur.de\/MediaBrowser"
     }
   },
   "require":{
