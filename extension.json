@@ -21,7 +21,8 @@
   "release":{
     "number":"0.31",
     "date":"2014-09-11",
-    "status":"release"
+    "status":"release",
+    "changelog":"https:\/\/github.com\/phpManufaktur\/kfMediaBrowser\/blob\/master\/CHANGELOG.md"
   },
   "description": {
     "en":{
