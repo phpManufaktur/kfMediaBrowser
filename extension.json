@@ -19,8 +19,8 @@
   "path":"\/extension\/phpmanufaktur\/phpManufaktur\/MediaBrowser",
   "namespace":"phpManufaktur\\MediaBrowser",
   "release":{
-    "number":"0.31",
-    "date":"2014-09-11",
+    "number":"0.32",
+    "date":"2014-09-14",
     "status":"release",
     "changelog":"https:\/\/github.com\/phpManufaktur\/kfMediaBrowser\/blob\/master\/CHANGELOG.md"
   },
@@ -45,7 +45,7 @@
     "extension":{
         "phpManufaktur":{
             "Basic":{
-                "release":"1.0.10"
+                "release":"1.0.12"
             }
         }
     }

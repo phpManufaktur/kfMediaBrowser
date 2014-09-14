@@ -6,6 +6,12 @@ MIT License (MIT) - <http://www.opensource.org/licenses/MIT>
 
 kitFramework - <https://kit2.phpmanufaktur.de>
 
+**0.32** - 2014-09-14
+
+* updated `@link` references
+* updated info URL
+* added URL for the changelog in CMS Tool
+
 **0.31** - 2014-09-11
 
 * fixed a problem executing the MediaBrowser within the Admin EntryPoints
